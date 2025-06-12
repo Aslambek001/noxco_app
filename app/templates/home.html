@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Noxco App{% endblock %}
+
+{% block content %}
+
+<section class="home-demo-section">
+    <h3 class="section-title">Популярные модели</h3>
+    <div class="model-feed-grid">
+        {% for model in stl_models %}
+            {# div.post-card nu het klikbare element voor het modaal venster #}
+            <div class="post-card clickable-model-item"
+                 data-model-id="{{ model.id }}"
+                 data-model-title="{{ model.title | e }}"
+                 data-model-filename="{{ model.filename | e }}"
+                 data-model-location="{{ (model.location or 'N/A') | e }}"
+                 data-model-tags="{{ (model.tags or 'N/A') | e }}"
+                 data-model-posted="{{ model.date_posted | e }}"
+                 data-author-username="{{ (model.author_username or 'Anonieme gebruiker') | e }}"
+                 data-author-profile-url="{{ url_for('main.profile', user_id=model.user_id) if model.user_id else url_for('main.profile') }}"
+                 data-likes-count="{{ model.likes_count }}"
+                 data-comments-count="{{ model.comments_count }}">
+
+                <div class="post-header">
+                    <img src="{{ model.profile_picture_url if model.profile_picture_url else url_for('static', filename='images/neutrale.png') }}" alt="User Profile" class="post-user-pic">
+                    <span class="post-username">
+                        <a href="{{ url_for('main.profile', user_id=model.user_id) if model.user_id else url_for('main.profile') }}" onclick="event.stopPropagation();">
+                            {{ (model.author_username or 'Anonieme gebruiker') | e }}
+                        </a>
+                    </span>
+                </div>
+                <div class="post-media">
+                    {# Hier wordt de 3D-viewer/preview van het model geladen #}
+                    <div id="stl-viewer-home-{{ model.id }}" class="stl-viewer-placeholder">
+                        {# 3D-viewer wordt hier gerenderd #}
+                    </div>
+                    {# Overlay bij hover om likes/opmerkingen weer te geven #}
+                    <div class="model-hover-info">
+                        <p><i class="fas fa-heart"></i> <span class="hover-likes-count">{{ model.likes_count }}</span></p>
+                        <p><i class="fas fa-comment"></i> <span class="hover-comments-count">{{ model.comments_count }}</span></p>
+                    </div>
+                </div>
+                {# VERWIJDERD: De .post-actions div met hart, commentaar en papieren vliegtuig #}
+                {# <div class="post-actions">
+                    <i class="far fa-heart"></i>
+                    <i class="far fa-comment"></i>
+                    <i class="far fa-paper-plane"></i>
+                </div> #}
+                <div class="post-caption">
+                    <span class="post-username">
+                        <a href="{{ url_for('main.profile', user_id=model.user_id) if model.user_id else url_for('main.profile') }}" onclick="event.stopPropagation();">
+                            {{ (model.author_username or 'Anonieme gebruiker') | e }}
+                        </a>
+                    </span> {{ model.title | e or "Geen titel" }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}
+
+{% block body_extra_scripts %}
+    {# Hier is geen specifieke JS voor home.html nodig, alle logica zit in main.js #}
+{% endblock %}

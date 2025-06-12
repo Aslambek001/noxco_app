@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Zoekresultaten voor "{{ query }}"{% endblock %}
+
+{% block content %}
+<div class="search-results-container">
+    <h2>Zoekresultaten voor "{{ query }}"</h2>
+
+    {% if users %}
+        <ul class="user-list">
+            {% for user_found in users %}
+                <li class="user-item">
+                    <div class="user-avatar-wrapper">
+                        <img src="{{ user_found.profile_picture_url or url_for('static', filename='images/default_user_pic.png') }}" alt="{{ user_found.username }}" class="user-avatar">
+                    </div>
+                    <div class="user-info">
+                        <a href="{{ url_for('main.profile', user_id=user_found.id) }}" class="username-link">{{ user_found.username }}</a>
+                        {% if user_found.full_name %}
+                            <span class="full-name">{{ user_found.full_name }}</span>
+                        {% endif %}
+                        {% if user_found.is_private %}<i class="fas fa-lock" title="Privéaccount" style="font-size: 14px; color: #8e8e8e; margin-left: 5px;"></i>{% endif %}
+                        {# Optioneel: je kunt hier direct een "Volgen" knop toevoegen #}
+                        {# {% if current_user.is_authenticated and current_user.id != user_found.id %}
+                            {% if current_user.is_following(user_found) %}
+                                <a href="{{ url_for('main.unfollow_user', user_id=user_found.id) }}" class="btn-small unfollow-btn">Volgend</a>
+                            {% else %}
+                                <a href="{{ url_for('main.follow_user', user_id=user_found.id) }}" class="btn-small follow-btn">Volgen</a>
+                            {% endif %}
+                        {% endif %} #}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Geen gebruikers gevonden voor de zoekterm "{{ query }}".</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block body_extra_scripts %}
+    {# Als er specifieke JS nodig is voor deze pagina, voeg het hier toe #}
+{% endblock %}

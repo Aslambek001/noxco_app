@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Profiel bewerken - Noxco App{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <div class="edit-profile-sidebar">
+        {# Later kun je hier navigatie-links toevoegen, zoals "Wachtwoord wijzigen", "Apps en websites" #}
+        <a href="{{ url_for('main.edit_profile') }}" class="sidebar-link active">Profiel bewerken</a>
+        {# Voorbeeld van andere links #}
+        {# etc. #}
+    </div>
+    <div class="edit-profile-main">
+        {# BELANGRIJK: voeg enctype="multipart/form-data" toe aan de form-tag voor bestandsuploads! #}
+        <form method="POST" action="{{ url_for('main.edit_profile') }}" class="edit-profile-form" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> {# Zorg dat CSRF-token hier is #}
+
+            <div class="profile-edit-header">
+                <div class="profile-edit-pic-wrapper">
+                    {# img-tag met ID voor JS preview #}
+                    <img id="currentProfilePic" src="{{ user.profile_picture_url or url_for('static', filename='images/default_user_pic.png') }}" alt="Profielfoto">
+                    <div class="profile-pic-overlay">
+                        {# LABEL is nu de klikbare overlay voor de verborgen file input #}
+                        <label for="profile_picture_upload" class="upload-pic-label">
+                            <i class="fas fa-camera"></i> Profielfoto wijzigen
+                            {# DEZE IS DE DAADWERKELIJKE FILE INPUT, VERBORGEN #}
+                            <input type="file" id="profile_picture_upload" name="profile_picture" accept="image/*" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+                <div class="profile-edit-info">
+                    <h2>{{ user.username }}</h2>
+                    {# De knop "Profielfoto wijzigen" kan nu ook gelinkt worden aan de label/input of verwijderd worden #}
+                    <label for="profile_picture_upload" class="change-profile-pic-btn">Profielfoto wijzigen</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="full_name">Volledige naam</label>
+                <input type="text" id="full_name" name="full_name" value="{{ user.full_name or '' }}" placeholder="Volledige naam">
+            </div>
+            <div class="form-group">
+                <label for="username">Gebruikersnaam</label>
+                <input type="text" id="username" name="username" value="{{ user.username or '' }}" placeholder="Gebruikersnaam" required>
+            </div>
+            <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" name="bio" placeholder="Bio">{{ user.bio or '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mailadres</label>
+                {# E-mailadres is vaak niet direct bewerkbaar. Maak het readonly of disable het. #}
+                <input type="email" id="email" name="email" value="{{ user.email or '' }}" placeholder="E-mailadres" readonly>
+            </div>
+
+            {# VERWIJDERD: Het oude Profielfoto URL tekstveld #}
+            {# <div class="form-group">
+                <label for="profile_picture_url">Profielfoto URL</label>
+                <input type="text" id="profile_picture_url" name="profile_picture_url" value="{{ user.profile_picture_url or '' }}" placeholder="URL van profielfoto">
+            </div> #}
+
+            {# --- CHECKBOX VOOR PRIVACY --- #}
+            <div class="form-group">
+                <label for="is_private">Приватный аккаунт</label>
+                <div style="flex-grow: 1; max-width: 355px; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="is_private" name="is_private" {% if user.is_private %}checked{% endif %} style="width: auto;">
+                    <span style="font-size: 14px; color: #8e8e8e;">Сделать ваш аккаунт приватным.</span>
+                </div>
+            </div>
+
+            <div class="form-group form-actions">
+                <button type="submit" class="btn-submit">Verzenden</button>
+                <button type="button" class="btn-cancel" onclick="window.location.href = '{{ url_for('main.profile') }}'">Annuleren</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block body_extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profilePictureUpload = document.getElementById('profile_picture_upload');
+        const currentProfilePic = document.getElementById('currentProfilePic');
+
+        // Voeg event listener toe om een preview te tonen bij het selecteren van een bestand
+        profilePictureUpload.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentProfilePic.src = e.target.result; // Update de src van de afbeelding
+                };
+                reader.readAsDataURL(this.files[0]); // Lees het bestand als een Data URL
+            }
+        });
+    });
+</script>
+{% endblock %}

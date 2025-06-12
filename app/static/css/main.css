@@ -1,0 +1,1623 @@
+/* app/static/css/main.css */
+
+/* --- Общие стили и сброс --- */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #fafafa; /* Светлый фон, как у Instagram */
+    color: #262626;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Минимальная высота для футера */
+    font-size: 14px;
+    line-height: 18px;
+}
+
+a {
+    text-decoration: none;
+    color: #00376b; /* Цвет ссылок Instagram */
+}
+
+a:hover {
+    text-decoration: none; /* Убрать подчеркивание при наведении */
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+input[type="text"], input[type="password"], input[type="email"], textarea {
+    padding: 9px 8px;
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    background-color: #fafafa;
+    color: #262626;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+/* --- Стили для хэдера (Instagram-style) --- */
+.instagram-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dbdbdb; /* Разделительная линия */
+    padding: 16px 0;
+    position: sticky; /* Липкий хэдер */
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 1px 0 rgba(0,0,0,.05); /* Легкая тень */
+}
+
+.header-content {
+    max-width: 935px; /* Ширина контента, как у Instagram */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 36px; /* Высота хэдера */
+    padding: 0 20px; /* Внутренние отступы */
+}
+
+.header-content .logo a {
+    /* Для имитации лого Instagram, используем текст или можно добавить SVG */
+    /* font-family: 'Billabong', cursive; */ /* Если у вас есть шрифт Billabong, иначе используйте системный */
+    font-size: 28px;
+    color: #262626;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+.header-content .search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.header-content .search-bar input {
+    width: 215px; /* Ширина поля поиска */
+    padding-left: 25px; /* Отступ для иконки */
+    background-color: #efefef; /* Серый фон поля поиска */
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    outline: none; /* Verwijder focus-rand */
+}
+
+.header-content .search-bar input:focus {
+    border-color: #b3b3b3; /* Lichter rand bij focus */
+}
+
+.header-content .search-bar input::placeholder {
+    color: #8e8e8e;
+}
+
+.header-content .search-bar i {
+    position: absolute;
+    left: 8px;
+    color: #8e8e8e;
+    font-size: 14px;
+}
+
+.header-content .main-nav ul {
+    display: flex;
+    gap: 22px; /* Расстояние между элементами меню */
+}
+
+.header-content .main-nav a {
+    color: #262626;
+    font-size: 22px; /* Размер иконок */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; /* Размер контейнера иконки */
+    height: 24px;
+}
+
+.header-content .main-nav a:hover {
+    color: #8e8e8e; /* Изменение цвета при наведении на иконку */
+}
+
+.nav-profile-pic {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #dbdbdb; /* Небольшая обводка для профиля */
+}
+
+.login-link, .logout-link {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0095f6 !important; /* Синий цвет для ссылок входа/выхода */
+    text-decoration: none;
+    text-transform: capitalize;
+}
+.logout-link {
+    color: #8e8e8e !important; /* Серый цвет для "Выйти" */
+}
+
+
+/* --- Стили для основного контента --- */
+.content-wrapper {
+    flex-grow: 1; /* Позволяет контенту занимать все доступное пространство */
+    max-width: 935px;
+    margin: 20px auto; /* Отступы сверху/снизу и центрирование */
+    padding: 0 20px;
+}
+
+/* --- Стили для flash-сообщений --- */
+.flashes {
+    list-style: none;
+    padding: 10px 20px;
+    margin: 10px auto;
+    border-radius: 4px;
+    font-weight: 600;
+    max-width: 935px;
+    box-sizing: border-box; /* Учитывать padding и border в ширине */
+}
+
+.flashes li.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.flashes li.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.flashes li.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+
+/* --- Стили для футера (Instagram-style) --- */
+.instagram-footer {
+    background-color: #fafafa;
+    border-top: 1px solid #dbdbdb;
+    padding: 24px 0;
+    margin-top: 40px;
+    font-size: 12px;
+    color: #8e8e8e;
+}
+
+.footer-content {
+    max-width: 935px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap; /* Позволяет элементам переноситься на новую строку */
+    justify-content: center; /* Центрирование элементов */
+    gap: 16px; /* Расстояние между элементами */
+    padding: 0 20px;
+}
+
+.footer-content p {
+    margin: 0;
+    flex-basis: 100%; /* Занимает всю ширину на маленьких экранах */
+    text-align: center;
+    margin-bottom: 10px; /* Отступ от навигации */
+}
+
+.footer-content .footer-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
+
+.footer-content .footer-nav a {
+    color: #8e8e8e;
+    text-transform: capitalize;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+.footer-content .footer-nav a:hover {
+    text-decoration: underline;
+}
+
+
+/* --- Algemene sectie voor de Homepagina / Feed --- */
+.home-demo-section {
+    max-width: 600px; /* Instagram feed is smaller than full width */
+    margin: 40px auto;
+    padding: 0 20px;
+    background-color: #ffffff; /* Witte achtergrond voor de sectie */
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow */
+    padding-top: 0; /* Remove top padding as post-cards will have their own padding */
+}
+
+.section-title {
+    text-align: center;
+    font-size: 22px;
+    color: #262626;
+    margin-bottom: 20px;
+    padding-top: 20px; /* Add padding here if needed */
+    font-weight: 600; /* Bolder title */
+}
+
+.model-feed-grid { /* Changed from .profile-gallery for feed specificity */
+    display: flex;
+    flex-direction: column; /* Stack posts vertically */
+    gap: 20px; /* Spacing between posts */
+    padding: 20px 0; /* Padding for the entire grid area */
+}
+
+.post-card {
+    background-color: #ffffff;
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    overflow: hidden; /* Ensure content stays within borders */
+    margin-bottom: 20px; /* Space between posts */
+}
+
+/* Стили для кликабельных элементов на главной странице */
+.clickable-model-item {
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.clickable-model-item:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+
+.post-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #efefef; /* Subtle separator */
+}
+
+.post-user-pic {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+}
+
+.post-username {
+    font-weight: 600; /* Bold username */
+    color: #262626;
+    font-size: 14px;
+}
+
+.post-username a { /* Убедитесь, что ссылки внутри имени пользователя стилизованы */
+    text-decoration: none;
+    color: inherit; /* Наследовать цвет от родителя */
+}
+
+.post-username a:hover {
+    text-decoration: underline; /* Подчеркивать при наведении */
+}
+
+
+.post-media {
+    width: 100%;
+    background-color: #efefef; /* Placeholder background */
+    height: 300px; /* Фиксированная высота для примера */
+    display: flex; /* Для центрирования STL-вьювера */
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.post-media .post-image {
+    width: 100%;
+    display: block; /* Remove extra space below image */
+}
+
+.post-actions {
+    padding: 10px 16px;
+    display: flex;
+    gap: 16px;
+    font-size: 24px; /* Size of icons */
+    color: #262626;
+    border-top: 1px solid #efefef; /* Разделитель, если нужен */
+    border-bottom: 1px solid #efefef;
+}
+
+.post-actions i {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.post-actions i:hover {
+    color: #8e8e8e;
+}
+
+.post-caption {
+    padding: 0 16px 14px;
+    line-height: 1.5;
+    color: #262626;
+}
+
+/* --- Responsive aanpassingen --- */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 0 10px;
+    }
+
+    .header-content .search-bar {
+        display: none; /* Hide search bar on smaller screens */
+    }
+
+    .header-content .main-nav ul {
+        gap: 18px;
+    }
+
+    .content-wrapper {
+        padding: 0 10px;
+    }
+
+    .home-demo-section {
+        margin: 20px auto;
+        padding: 0; /* Remove horizontal padding, post-cards will handle it */
+    }
+
+    .post-card {
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+    }
+}
+
+
+/* --- Profielpagina Stijlen (aangepast en uitgebreid) --- */
+.profile-main-container {
+    max-width: 935px; /* Instagram's max content width */
+    margin: 60px auto 30px; /* Top spacing from header */
+    padding: 0 20px;
+}
+
+.profile-header-section {
+    display: flex;
+    align-items: center;
+    padding-bottom: 44px; /* More padding as per Instagram */
+    border-bottom: none; /* No border here */
+    margin-bottom: 44px;
+}
+
+.profile-pic-wrapper {
+    width: 150px; /* Instagram's profile picture size */
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 100px; /* Increased margin for spacing */
+    flex-shrink: 0;
+    border: 1px solid #dbdbdb;
+    display: flex; /* For centering content in placeholder */
+    align-items: center;
+    justify-content: center;
+    background-color: #efefef; /* Placeholder background */
+}
+
+.profile-pic-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info-section {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allows it to take remaining space */
+}
+
+.profile-username-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 20px; /* Spacing between username and buttons */
+}
+
+.profile-username-row h1 {
+    font-size: 28px;
+    font-weight: 300;
+    margin: 0; /* Reset margin */
+    color: #262626;
+}
+
+/* --- Профиль: Кнопки Follow / Unfollow --- */
+.edit-profile-btn, .follow-btn, .message-btn {
+    background-color: #efefef; /* Instagram's edit/follow button background */
+    color: #262626;
+    border: 1px solid #dbdbdb; /* Instagram's edit/follow button border */
+    border-radius: 3px;
+    padding: 5px 9px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    text-transform: capitalize;
+    transition: background-color 0.2s ease;
+    text-decoration: none; /* Для <a> тегов */
+}
+
+.edit-profile-btn:hover, .message-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.follow-btn {
+    background-color: #0095f6; /* Blue for Follow button */
+    color: #ffffff;
+    border: none;
+}
+.follow-btn:hover {
+    background-color: #0077c0;
+}
+
+/* Стиль для кнопки "Volgend" (когда уже подписан) - она должна быть серой */
+a.edit-profile-btn[href*="unfollow"] {
+    background-color: #efefef;
+    color: #262626;
+    border: 1px solid #dbdbdb;
+}
+
+a.edit-profile-btn[href*="unfollow"]:hover {
+    background-color: #e0e0e0;
+}
+
+.settings-icon {
+    color: #262626;
+    font-size: 24px;
+    margin-left: 20px; /* Spacing for the settings icon */
+    cursor: pointer;
+}
+
+.profile-stats-row {
+    display: flex;
+    margin-bottom: 20px;
+    gap: 40px;
+    font-size: 16px;
+}
+
+.profile-stats-row span {
+    color: #262626;
+}
+
+.profile-stats-row strong {
+    font-weight: 600;
+    margin-right: 5px;
+    color: #262626; /* Ensure it's dark */
+}
+
+.profile-name-bio {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.profile-name-bio p {
+    margin: 0 0 5px 0;
+    color: #262626;
+}
+
+/* Story Highlights Section */
+.story-highlights-section {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 44px; /* Spacing from tabs */
+    padding: 0 20px;
+}
+
+.highlight-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.highlight-circle {
+    width: 77px; /* Instagram highlight circle size */
+    height: 77px;
+    border-radius: 50%;
+    border: 1px solid #dbdbdb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 8px;
+    background-color: #efefef; /* Placeholder background */
+}
+
+.highlight-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.highlight-circle .fas {
+    font-size: 28px;
+    color: #8e8e8e;
+}
+
+.add-highlight .highlight-circle {
+    border: 1px dashed #dbdbdb; /* Dotted border for "New" highlight */
+    background-color: #ffffff;
+}
+
+.highlight-item span {
+    font-size: 12px;
+    font-weight: 400;
+    color: #262626;
+}
+
+/* Profile Tabs */
+.profile-tabs {
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #dbdbdb;
+    padding-top: 20px;
+    margin-top: 20px;
+    gap: 60px; /* Increased gap between tabs */
+}
+
+.profile-tabs button {
+    background: none;
+    border: none;
+    padding: 10px 0; /* Remove horizontal padding, only vertical */
+    font-size: 12px; /* Smaller font size for tabs */
+    font-weight: 600;
+    color: #8e8e8e;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px; /* Add letter spacing */
+}
+
+.profile-tabs button.active {
+    color: #262626;
+    border-top: 1px solid #262626;
+    margin-top: -1px;
+}
+
+.profile-tabs button i {
+    font-size: 12px; /* Smaller icon size for tabs */
+}
+
+/* Profile Gallery Grid */
+.profile-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns for photos */
+    gap: 28px; /* Spacing between photos */
+    margin-top: 20px; /* Space from tabs */
+}
+
+.profile-gallery-item {
+    width: 100%;
+    padding-bottom: 100%; /* Creates square items */
+    position: relative;
+    background-color: #efefef; /* Placeholder background */
+    overflow: hidden;
+    cursor: pointer; /* Indicates clickable item */
+}
+
+.profile-gallery-item img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-item-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e0e0e0; /* Gray background for placeholder */
+    color: #555;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.gallery-item-title {
+    padding: 10px;
+    background: rgba(0,0,0,0.5); /* Semi-transparent overlay */
+    color: white;
+    font-size: 0.9em;
+    word-wrap: break-word; /* Allow long titles to wrap */
+}
+
+/* Overlay for likes/comments on profile gallery items */
+.gallery-item-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+    pointer-events: none; /* Zorgt ervoor dat klikken door de overlay heen gaan, tenzij element is geklikt */
+}
+
+.profile-gallery-item:hover .gallery-item-overlay {
+    opacity: 1;
+}
+
+.overlay-likes, .overlay-comments {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.no-posts-message {
+    text-align: center;
+    padding: 50px;
+    color: #8e8e8e;
+    font-size: 1.1em;
+}
+
+/* --- Стили для модального окна ЗАГРУЗКИ (из вашего предоставленного CSS) --- */
+
+/* Это общий стиль для фонового оверлея модальных окон */
+.modal { /* Этот класс теперь используется для #modelModal в base.html */
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top of everything */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.modal.active {
+    display: flex; /* Show flex when active */
+}
+
+/* Стиль для содержимого модального окна просмотра модели */
+#modelModal .modal-content {
+    background-color: #fefefe;
+    margin: auto; /* Auto margin for centering */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%; /* Adjusted width */
+    max-width: 900px; /* Max width for larger screens */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Общая кнопка закрытия модальных окон */
+#modelModal .close-button,
+.modal-header .close-button { /* Для модала загрузки, если он использует такой же класс */
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #8e8e8e;
+    cursor: pointer;
+    position: absolute;
+    right: 16px;
+    top: 16px; /* Ajust to align with title */
+    z-index: 10;
+}
+
+#modelModal .close-button:hover,
+.modal-header .close-button:hover {
+    color: #262626;
+}
+
+/* Заголовок модального окна просмотра модели */
+#modelModal .modal-header {
+    display: flex; /* Используем flex для расположения элементов */
+    flex-direction: column; /* Элементы в столбик */
+    align-items: center; /* Центрируем по горизонтали */
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+    text-align: center; /* Центрируем текст */
+}
+
+#modelModal .modal-header h2 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #333;
+}
+
+#modelModal .modal-header p {
+    margin: 5px 0 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+#modelModal .modal-header a { /* Ссылка на автора */
+    font-weight: 600;
+    color: #0095f6;
+}
+
+
+/* Тело модального окна просмотра модели (для Three.js viewer) */
+#modelModal .modal-body {
+    flex-grow: 1;
+    min-height: 300px; /* Минимальная высота для 3D-вьювера */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 0; /* Удаляем отступы по умолчанию, так как inner div имеет стиль */
+}
+
+/* Стиль для контейнера вьювера внутри модального окна */
+#modalStlViewer {
+    width: 100%;
+    height: 100%;
+    min-height: 400px; /* Убедимся, что у него хорошая высота */
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+/* Стили для нижней панели действий модального окна просмотра модели */
+.modal-actions-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.modal-action-btn {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #555;
+    transition: background-color 0.2s, color 0.2s;
+    text-decoration: none; /* Для <a> тега (download) */
+}
+
+.modal-action-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.modal-action-btn i {
+    font-size: 1.2em;
+}
+
+.modal-action-btn.liked i {
+    color: #ed4956; /* Instagram red */
+}
+
+
+/* --- Стили для модального окна ЗАГРУЗКИ (из вашего предоставленного CSS) --- */
+
+/* Это общий стиль для фонового оверлея модальных окон */
+.modal { /* Этот класс теперь используется для #modelModal в base.html */
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top of everything */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.modal.active {
+    display: flex; /* Show flex when active */
+}
+
+/* Стиль для содержимого модального окна загрузки */
+#uploadModal .modal-content-upload { /* Уточненный селектор для uploadModal */
+    background: #ffffff;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-header h3 { /* Заголовок модального окна загрузки */
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #262626;
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* Общая кнопка закрытия уже определена выше, но это специфичный для хедера загрузки */
+.modal-header .close-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #8e8e8e;
+    cursor: pointer;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.modal-header .close-button:hover {
+    color: #262626;
+}
+
+.modal-body { /* Тело модального окна загрузки */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.upload-area {
+    border: 2px dashed #dbdbdb;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    color: #8e8e8e;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-area:hover {
+    background-color: #f0f0f0;
+}
+
+.upload-area .fas {
+    margin-bottom: 15px;
+    color: #b3b3b3;
+}
+
+.upload-area p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.upload-area .browse-files {
+    color: #0095f6;
+    font-weight: 600;
+}
+
+.upload-preview {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+}
+
+.file-preview-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    background-color: #efefef;
+}
+
+.preview-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.preview-text #fileName {
+    font-weight: 600;
+    color: #262626;
+}
+
+.preview-text #fileSize {
+    color: #8e8e8e;
+}
+
+.post-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.post-caption-input, .post-location-input, .post-tags-input {
+    width: calc(100% - 18px);
+    min-height: 80px;
+    resize: vertical;
+    font-family: inherit;
+}
+.post-location-input, .post-tags-input {
+    min-height: auto;
+    height: auto;
+}
+
+
+.modal-actions { /* Кнопки действий модального окна загрузки */
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #efefef;
+    margin-top: 20px;
+}
+
+.btn-cancel, .btn-post {
+    padding: 8px 16px;
+    border-radius: 3px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+}
+
+.btn-cancel:hover {
+    background-color: #efefef;
+}
+
+.btn-post {
+    background-color: #0095f6;
+    color: #ffffff;
+    border: none;
+}
+
+.btn-post:hover {
+    background-color: #0077c0;
+}
+
+
+/* Stijlen voor de STL Viewer placeholders */
+.stl-viewer-placeholder {
+    width: 100%;
+    height: 100%; /* Занимает всю доступную высоту родителя */
+    background-color: #f0f0f0; /* Achtergrondkleur tot model laadt */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Zorg ervoor dat 3D-renderer binnen de container blijft */
+    position: relative; /* Voor eventuele absolute positionering van laad-indicators */
+}
+
+/* Для post-media, чтобы установить фиксированную высоту для stl-viewer-placeholder */
+.post-media {
+    height: 300px; /* Высота для превью на главной странице */
+}
+
+/* Для smaller viewers op profielpagina, чтобы сделать их квадратными */
+.profile-gallery-item {
+    width: 100%;
+    padding-bottom: 100%; /* Создает квадрат */
+    height: 0; /* Устанавливаем высоту в 0, padding-bottom делает работу */
+    position: relative;
+}
+/* Canvas внутри .stl-viewer-placeholder */
+.stl-viewer-placeholder canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block; /* Убираем лишние пробелы */
+}
+
+
+/* --- Stijlen voor edit_profile.html (Profiel bewerken) --- */
+.edit-profile-container {
+    max-width: 935px;
+    margin: 40px auto;
+    background-color: #ffffff;
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    display: flex;
+    min-height: 500px; /* Voldoende hoogte voor de lay-out */
+}
+
+.edit-profile-sidebar {
+    width: 232px; /* Breedte van de zijbalk */
+    border-right: 1px solid #dbdbdb;
+    padding: 20px 0;
+    flex-shrink: 0; /* Voorkom dat de zijbalk kleiner wordt */
+}
+
+.sidebar-link {
+    display: block;
+    padding: 16px 20px 16px 30px; /* Meer padding links */
+    color: #262626;
+    font-size: 16px;
+    font-weight: 400;
+    text-decoration: none;
+    border-left: 2px solid transparent; /* Voor de actieve status */
+    transition: background-color 0.1s ease, border-left-color 0.1s ease;
+}
+
+.sidebar-link:hover {
+    background-color: #fafafa;
+}
+
+.sidebar-link.active {
+    color: #262626;
+    font-weight: 600;
+    border-left-color: #262626; /* Dikke zwarte streep voor actieve link */
+    background-color: #ffffff; /* Zorg ervoor dat de actieve link wit blijft */
+}
+
+.edit-profile-main {
+    flex-grow: 1;
+    padding: 30px 20px 30px 60px; /* Meer padding aan de linkerkant */
+}
+
+.profile-edit-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.profile-edit-pic-wrapper {
+    width: 38px; /* Kleiner profielafbeelding in het formulier */
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 30px;
+    border: 1px solid #dbdbdb;
+    flex-shrink: 0;
+}
+
+.profile-edit-pic-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-edit-info h2 {
+    font-size: 20px;
+    font-weight: 400;
+    margin: 0;
+    color: #262626;
+}
+
+.change-profile-pic-btn {
+    background: none;
+    border: none;
+    color: #0095f6;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 5px; /* Beetje ruimte onder de gebruikersnaam */
+}
+
+.edit-profile-form .form-group {
+    display: flex;
+    margin-bottom: 20px;
+    align-items: baseline; /* Lijn labels en inputlijnen uit */
+}
+
+.edit-profile-form label {
+    flex-basis: 120px; /* Vaste breedte voor labels */
+    padding-right: 30px;
+    text-align: right;
+    font-size: 16px;
+    font-weight: 600;
+    color: #262626;
+    flex-shrink: 0;
+    padding-top: 5px; /* Uitlijnen met input padding */
+}
+
+.edit-profile-form input[type="text"],
+.edit-profile-form input[type="email"],
+.edit-profile-form textarea {
+    flex-grow: 1;
+    max-width: 355px; /* Maximale breedte voor inputvelden */
+    background-color: #ffffff; /* Witte achtergrond voor inputvelden in dit formulier */
+}
+
+.edit-profile-form textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.edit-profile-form .form-actions {
+    margin-top: 30px;
+    padding-left: 120px; /* Lijn uit met inputvelden */
+}
+
+.edit-profile-form .btn-submit {
+    background-color: #0095f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-submit:hover {
+    background-color: #0077c0;
+}
+
+.btn-cancel {
+    background: none;
+    border: none;
+    color: #0095f6;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Responsieve aanpassingen voor Profiel bewerken */
+@media (max-width: 768px) {
+    .edit-profile-container {
+        flex-direction: column;
+        margin: 20px auto;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        min-height: auto;
+    }
+
+    .edit-profile-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #dbdbdb;
+        padding: 0;
+        display: flex;
+        overflow-x: auto; /* Scrollen op kleinere schermen */
+        white-space: nowrap; /* Houd links op één lijn */
+    }
+
+    .sidebar-link {
+        padding: 15px 20px;
+        text-align: center;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+        flex-grow: 1;
+        flex-shrink: 0;
+    }
+
+    .sidebar-link.active {
+        border-left: none;
+        border-bottom-color: #262626; /* Streep onder actieve link */
+    }
+
+    .edit-profile-main {
+        padding: 20px;
+    }
+
+    .profile-edit-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-edit-pic-wrapper {
+        margin: 0 0 15px 0;
+    }
+
+    .profile-edit-info h2 {
+        text-align: center;
+        width: 100%;
+    }
+
+    .change-profile-pic-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .edit-profile-form .form-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .edit-profile-form label {
+        flex-basis: auto;
+        padding-right: 0;
+        text-align: left;
+        margin-bottom: 5px;
+    }
+
+    .edit-profile-form input[type="text"],
+    .edit-profile-form input[type="email"],
+    .edit-profile-form textarea {
+        max-width: 100%;
+    }
+
+    .edit-profile-form .form-actions {
+        padding-left: 0;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+}
+
+/* --- Стили для вкладки "Vrienden" (Друзья) --- */
+.friends-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Отступ между секциями "Подписчики" и "Подписки" */
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    margin-top: 20px;
+}
+
+.friends-list-container h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.friends-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Отступ между элементами списка друзей */
+}
+
+.friend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #efefef; /* Разделитель между друзьями */
+}
+
+.friend-item:last-child {
+    border-bottom: none; /* Убрать границу у последнего элемента */
+}
+
+.friend-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #dbdbdb;
+    flex-shrink: 0; /* Не сжимать аватар */
+}
+
+.friend-username {
+    font-weight: 600;
+    color: #262626;
+    text-decoration: none;
+    flex-grow: 1; /* Позволяет имени занимать доступное пространство */
+}
+
+.friend-username:hover {
+    text-decoration: underline;
+}
+
+.unfollow-btn-small {
+    background-color: #efefef;
+    color: #262626;
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    padding: 5px 10px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    text-transform: capitalize;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+}
+
+.unfollow-btn-small:hover {
+    background-color: #e0e0e0;
+}
+
+.no-friends-message {
+    text-align: center;
+    color: #8e8e8e;
+    padding: 20px;
+    font-size: 1em;
+}
+
+/* Изменения для активации flexbox у friends-list-container */
+.tab-content#friends-tab-content {
+    display: flex; /* Переопределяем на flex для этого блока */
+    justify-content: center;
+    align-items: flex-start; /* Выровнять по верху */
+}
+/* Основной стиль для overlay */
+.modal-overlay {
+    display: none; /* Скрыт по умолчанию */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Активное модальное окно */
+.modal-overlay.active {
+    display: flex;
+}
+
+/* Контент загрузочного модала */
+.modal-content-upload {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+/* Закрывающая кнопка */
+.modal-content-upload .close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Тело модального окна */
+.modal-body {
+    margin-top: 20px;
+}
+
+/* Область загрузки */
+.upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-area:hover {
+    background-color: #f9f9f9;
+}
+
+.upload-area i {
+    font-size: 40px;
+    color: #666;
+}
+
+.browse-files {
+    font-weight: bold;
+    color: #007BFF;
+    cursor: pointer;
+}
+
+/* Превью загруженного файла */
+.upload-preview {
+    display: flex;
+    margin-top: 15px;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-preview-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.preview-text span {
+    display: block;
+}
+
+/* Детали поста */
+.post-details {
+    margin-top: 15px;
+}
+
+.post-caption-input,
+.post-location-input,
+.post-tags-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* Кнопки */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-cancel,
+.btn-post {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background-color: #ccc;
+    color: #000;
+}
+
+.btn-post {
+    background-color: #007BFF;
+    color: #fff;
+}
+/* Styles for the modal content layout */
+.modal-content {
+    display: flex; /* Makes main content and comments panel sit side-by-side */
+    gap: 20px; /* Space between the two sections */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%; /* Adjust as needed */
+    max-width: 1200px; /* Max width for the whole modal */
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden; /* Ensure content doesn't spill out */
+}
+
+.modal-main-content {
+    flex: 2; /* Takes 2 parts of available space */
+    min-width: 500px; /* Minimum width for the main content area */
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-comments-panel {
+    flex: 1; /* Takes 1 part of available space */
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #eee; /* Separator line */
+    padding-left: 20px;
+    max-height: 80vh; /* Limit height of comments panel */
+}
+
+.comments-header h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.comments-list {
+    flex-grow: 1; /* Allows the list to take up available space */
+    overflow-y: auto; /* Adds scrollbar if comments exceed height */
+    padding-right: 10px; /* Space for scrollbar */
+}
+
+.comment-item {
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #f0f0f0;
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #333;
+    margin-right: 5px;
+}
+
+.comment-text {
+    color: #555;
+    word-wrap: break-word; /* Prevents long words from breaking layout */
+}
+
+.comment-form {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+}
+
+#newCommentText {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical; /* Allow vertical resizing */
+}
+
+.btn-post-comment {
+    align-self: flex-end; /* Aligns button to the right */
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-post-comment:hover {
+    background-color: #0056b3;
+}
+
+/* Ensure existing close button is positioned correctly */
+.modal-content > .close-button { /* Target direct child to avoid conflicts */
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10; /* Ensure it's above other content */
+}
+
+/* Optional: Adjust modal body height if needed */
+.modal-body {
+    flex-grow: 1; /* Allow 3D viewer area to grow */
+    display: flex; /* Make sure flex children can resize */
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 900px) {
+    .modal-content {
+        flex-direction: column; /* Stack sections vertically */
+        max-width: 600px;
+        max-height: 90vh; /* Allow more height on small screens */
+        overflow-y: auto; /* Make the entire modal scrollable */
+    }
+
+    .modal-main-content {
+        min-width: unset; /* Remove min-width constraint */
+    }
+
+    .modal-comments-panel {
+        border-left: none; /* Remove left border */
+        border-top: 1px solid #eee; /* Add top border */
+        padding-left: 0;
+        padding-top: 20px;
+        max-height: unset; /* No height limit when stacked */
+    }
+}

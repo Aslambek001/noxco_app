@@ -1,0 +1,36 @@
+<header class="instagram-header">
+    <div class="header-content">
+        <div class="logo">
+            <a href="{{ url_for('main.home') }}">NOXCO</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Поиск">
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{{ url_for('main.home') }}"><i class="fas fa-home"></i></a></li>
+                <li><a href="#"><i class="fas fa-paper-plane"></i></a></li>
+                {% if current_user.is_authenticated %}
+                     <li><a href="#" id="openUploadModalBtn"><i class="fas fa-plus-square"></i></a></li>
+                {% endif %}
+
+                <li><a href="#"><i class="fas fa-compass"></i></a></li>
+                <li><a href="#"><i class="fas fa-heart"></i></a></li>
+                {% if session.user %}
+                    <li class="profile-icon">
+                        <a href="{{ url_for('main.profile') }}">
+                            {% if session.user.picture %}
+                                <img src="{{ session.user.picture }}" alt="Profile Picture" class="nav-profile-pic">
+                            {% else %}
+                                <img src="https://via.placeholder.com/24?text=?" alt="Default Profile Pic" class="nav-profile-pic">
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li><a href="{{ url_for('auth.logout') }}" class="logout-link">Выйти</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth.login') }}" class="login-link">Войти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>

@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.username }} - Profiel{% endblock %}
+
+{% block content %}
+<div class="profile-main-container">
+    <div class="profile-header-section">
+        <div class="profile-pic-wrapper">
+            {# Этот тег img попытается загрузить URL из user.profile_picture_url. #}
+            {# Если user.profile_picture_url пуст или None, он загрузит изображение по умолчанию. #}
+            <img src="{{ user.profile_picture_url or url_for('static', filename='images/default_user_pic.png') }}" alt="Profielfoto">
+        </div>
+        <div class="profile-info-section">
+            <div class="profile-username-row">
+                <h1>{{ user.username }} {% if user.is_private %}<i class="fas fa-lock" title="Приватный аккаунт" style="font-size: 18px; color: #8e8e8e; margin-left: 5px;"></i>{% endif %}</h1>
+                {% if current_user.is_authenticated %}
+                    {% if current_user.id == user.id %}
+                        <a href="{{ url_for('main.edit_profile') }}" class="edit-profile-btn">Profiel bewerken</a>
+                    {% else %}
+                        {% if is_following %}
+                            <a href="{{ url_for('main.unfollow_user', user_id=user.id) }}" class="edit-profile-btn">Volgend</a>
+                        {% else %}
+                            <a href="{{ url_for('main.follow_user', user_id=user.id) }}" class="follow-btn">Volgen</a>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="profile-stats-row">
+                <span><strong>{{ user_models|length }}</strong> berichten</span>
+                <span><strong>{{ follower_count }}</strong> volgers</span>
+                <span><strong>{{ following_count }}</strong> volgend</span>
+            </div>
+            <div class="profile-name-bio">
+                <p><strong>{{ user.full_name or user.username }}</strong></p>
+                <p>{{ user.bio or "Geen bio beschikbaar." }}</p>
+            </div>
+        </div>
+    </div>
+
+    {# Секция "Новое" (story highlights) была удалена по вашему запросу. #}
+
+    <div class="profile-tabs">
+        <button class="tab-button active" data-tab="posts"><i class="fas fa-th"></i> Berichten</button>
+        <button class="tab-button" data-tab="friends"><i class="fas fa-user-friends"></i> Vrienden</button>
+    </div>
+
+    <div class="tab-content" id="posts-tab-content">
+        {% if user.is_private and not (current_user.is_authenticated and (current_user.id == user.id or is_following)) %}
+            <div class="no-posts-message" style="text-align: center; padding: 50px;">
+                <i class="fas fa-lock" style="font-size: 50px; margin-bottom: 20px; color: #8e8e8e;"></i>
+                <p style="font-size: 1.2em; color: #8e8e8e;">Dit account is privé.</p>
+                <p style="font-size: 1em; color: #8e8e8e;">Volg deze gebruiker om hun berichten en profiel te zien.</p>
+                {% if current_user.is_authenticated and current_user.id != user.id %}
+                    <a href="{{ url_for('main.follow_user', user_id=user.id) }}" class="follow-btn" style="margin-top: 20px; display: inline-block;">Volgen</a>
+                {% endif %}
+            </div>
+        {% elif user_models %}
+            <div class="profile-gallery">
+                {% for model in user_models %}
+                    <div class="profile-gallery-item"
+                         data-model-id="{{ model.id }}"
+                         data-model-title="{{ model.title | e }}"
+                         data-model-filename="{{ model.filename | e }}"
+                         data-model-location="{{ (model.location or 'N/A') | e }}"
+                         data-model-tags="{{ (model.tags or 'N/A') | e }}"
+                         data-model-posted="{{ model.date_posted | e }}" {# Теперь это уже отформатированная строка из routes.py #}
+                         data-author-username="{{ (model.author_username or 'Anonieme gebruiker') | e }}"
+                         data-author-profile-url="{{ url_for('main.profile', user_id=model.user_id) if model.user_id else url_for('main.profile') }}"
+                         data-likes-count="{{ model.likes_count }}"
+                         data-comments-count="{{ model.comments_count }}">
+                        <div id="stl-viewer-profile-{{ model.id }}" class="stl-viewer-placeholder">
+                            {# 3D-вьювер будет рендериться здесь #}
+                        </div>
+                        {# Наложение при наведении для отображения лайков/комментариев #}
+                        <div class="model-hover-info">
+                            <p><i class="fas fa-heart"></i> <span class="hover-likes-count">{{ model.likes_count }}</span></p>
+                            <p><i class="fas fa-comment"></i> <span class="hover-comments-count">{{ model.comments_count }}</span></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-posts-message">Deze gebruiker heeft nog geen berichten.</p>
+        {% endif %}
+    </div>
+
+    <div class="tab-content" id="friends-tab-content" style="display: none;">
+        <div class="friends-list-container">
+            <h3>Volgers ({{ follower_count }})</h3>
+            {% if followers_list %}
+                <ul class="friends-list">
+                    {% for follower in followers_list %}
+                        <li class="friend-item">
+                            <img src="{{ follower.profile_picture_url or url_for('static', filename='images/default_user_pic.png') }}" alt="{{ follower.username }}" class="friend-pic">
+                            <a href="{{ url_for('main.profile', user_id=follower.id) }}" class="friend-username">{{ follower.username }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-friends-message">Geen volgers gevonden.</p>
+            {% endif %}
+
+            <h3>Volgend ({{ following_count }})</h3>
+            {% if following_list %}
+                <ul class="friends-list">
+                    {% for followed_user in following_list %}
+                        <li class="friend-item">
+                            <img src="{{ followed_user.profile_picture_url or url_for('static', filename='images/neutrale.png') }}" alt="{{ followed_user.username }}" class="friend-pic">
+                            <a href="{{ url_for('main.profile', user_id=followed_user.id) }}" class="friend-username">{{ followed_user.username }}</a>
+                            {% if current_user.is_authenticated and current_user.id == user.id %}
+                                <a href="{{ url_for('main.unfollow_user', user_id=followed_user.id) }}" class="unfollow-btn-small">Volgend</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-friends-message">Volgt nog niemand.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block body_extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.profile-tabs .tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.style.display = 'none');
+
+                this.classList.add('active');
+
+                const targetTab = this.dataset.tab;
+                const targetContent = document.getElementById(targetTab + '-tab-content');
+                if (targetContent) {
+                    targetContent.style.display = (targetTab === 'friends') ? 'flex' : 'grid';
+                }
+            });
+        });
+
+        const defaultTabButton = document.querySelector('.profile-tabs .tab-button[data-tab="posts"]');
+        if (defaultTabButton) {
+            defaultTabButton.click();
+        }
+    });
+</script>
+{% endblock %}

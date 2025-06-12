@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Noxco App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header class="instagram-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="{{ url_for('main.home') }}">NOXCO</a>
+            </div>
+            {# GEWIJZIGD: ZOEKVELD IN FORMULIER #}
+            <div class="search-bar">
+                <form action="{{ url_for('main.search_users') }}" method="GET" class="search-form">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="query" placeholder="Zoeken" value="{{ request.args.get('query', '') }}">
+                    <button type="submit" style="display: none;">Zoeken</button> {# Verborgen knop om formulier met Enter te verzenden #}
+                </form>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#"><i class="fas fa-plus-square" id="openUploadModalBtn"></i></a></li>
+                    <li><a href="{{ url_for('main.profile') }}">
+                        {% if current_user.is_authenticated and current_user.profile_picture_url %}
+                            <img src="{{ current_user.profile_picture_url }}" alt="Profiel" class="nav-profile-pic">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/neutrale.png') }}" alt="Profiel" class="nav-profile-pic">
+                        {% endif %}
+                    </a></li>
+                    <li>
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('auth.logout') }}" class="logout-link">Uitloggen</a>
+                        {% else %}
+                            <a href="{{ url_for('auth.login') }}" class="login-link">Inloggen</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    {# --- MODALE VENSTERSTRUCTUUR VOOR MODELVIEWER --- #}
+    <div id="modelModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-main-content">
+                <div class="modal-header">
+                    <h2 id="modalModelTitle"></h2>
+                    <p>Locatie: <span id="modalModelLocation"></span></p>
+                    <p>Tags: <span id="modalModelTags"></span></p>
+                    <p>Geüpload op: <span id="modalModelDate"></span></p>
+                    <p>Door: <a href="#" id="modalModelAuthorLink" onclick="event.stopPropagation();"><span id="modalModelAuthor"></span></a></p>
+                </div>
+                <div class="modal-body">
+                    <div id="modalStlViewer" style="width: 100%; height: 500px; background-color: #f0f0f0;">
+                    </div>
+                </div>
+                <div class="modal-actions-footer">
+                    <a href="#" id="downloadModelBtn" class="modal-action-btn" download><i class="fas fa-download"></i> Downloaden</a>
+                    <button id="likeModelBtn" class="modal-action-btn"><i class="far fa-heart"></i> Liken <span id="likeCount">0</span></button>
+                    <button id="commentModelBtn" class="modal-action-btn"><i class="far fa-comment"></i> Commentaar</button>
+                </div>
+            </div>
+            <div class="modal-comments-panel">
+                <div class="comments-header">
+                    <h3>Reacties</h3>
+                </div>
+                <div class="comments-list" id="commentsList">
+                </div>
+                <div class="comment-form">
+                    <textarea id="newCommentText" placeholder="Voeg een reactie toe..." rows="3"></textarea>
+                    <button id="postCommentBtn" class="btn-post-comment">Plaatsen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# --- MODALE VENSTERSTRUCTUUR VOOR BESTAND UPLOAD (UPLOAD MODAL) --- #}
+    <div id="uploadModal" class="modal-overlay">
+        <div class="modal-content-upload">
+            <div class="modal-header">
+                <h3>Nieuw bericht maken</h3>
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm" method="POST" action="{{ url_for('main.upload_model') }}" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-upload"></i>
+                        <p>Sleep hier foto's en video's</p>
+                        <input type="file" id="stlFile" name="stl_file" accept=".stl" hidden>
+                        <p><span class="browse-files">Bladeren</span> door bestanden</p>
+                    </div>
+                    <div class="upload-preview" id="uploadPreview" style="display: none;">
+                        <img src="" alt="Bestand voorbeeld" class="file-preview-img" id="filePreviewImage">
+                        <div class="preview-text">
+                            <span id="fileName"></span>
+                            <span id="fileSize"></span>
+                        </div>
+                    </div>
+                    <div class="post-details">
+                        <textarea class="post-caption-input" name="title" placeholder="Voeg een titel toe..." required></textarea>
+                        <input type="text" class="post-location-input" name="location" placeholder="Locatie toevoegen">
+                        <input type="text" class="post-tags-input" name="tags" placeholder="Tags toevoegen (bijv. #3dprint, #art)">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancel" id="cancelUpload">Annuleren</button>
+                        <button type="submit" class="btn-post">Delen</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# --- GLOBALE THREE.JS SCRIPTS EN JE HOOFD JAVASCRIPT --- #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/STLLoader.js"></script>
+
+    {# Script om Flask variabelen door te geven aan JavaScript (MOET vóór main.js staan) #}
+    <script>
+        const IS_AUTHENTICATED = {{ current_user.is_authenticated | tojson }};
+        const LOGIN_URL = "{{ url_for('auth.login') }}";
+    </script>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block body_extra_scripts %}{% endblock %}
+</body>
+</html>
