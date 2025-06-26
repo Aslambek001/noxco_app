@@ -1,13 +1,16 @@
-# clear_db.py
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from app import create_app
 from app.extensions import db
 
 app = create_app()
 
 with app.app_context():
-    # Отключаем внешние ключи (только для PostgreSQL!)
-    db.session.execute('TRUNCATE TABLE {} RESTART IDENTITY CASCADE;'.format(
-        ', '.join(table.name for table in db.metadata.sorted_tables)
-    ))
+    meta = db.metadata
+    for table in reversed(meta.sorted_tables):
+        print(f'Leegmaken: {table}')
+        db.session.execute(table.delete())
     db.session.commit()
-    print("✅ Все данные из базы данных удалены.")
+    print('Database succesvol geleegd!')

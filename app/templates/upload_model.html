@@ -3,31 +3,42 @@
 
 {% block content %}
 <div class="profile-main-container">
-    <a href="{{ url_for('main.profile') }}" class="terug-btn">
+
+    <!-- Кнопка "назад к профилю" — с передачей user_id -->
+    <a href="{{ url_for('main.profile', user_id=current_user.id) }}" class="terug-btn">
         <i class="fas fa-arrow-left"></i> Terug naar profiel
     </a>
+
     <div class="edit-profile-main" style="max-width: 480px; margin: 0 auto;">
         <h2 style="margin-bottom:18px;">Upload een nieuw 3D model</h2>
+
         <form id="uploadForm" method="POST" action="{{ url_for('main.upload_model') }}" enctype="multipart/form-data">
+            <!-- CSRF-token (если используешь Flask-WTF) -->
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
             <div class="form-group">
                 <label for="stl_file">STL-bestand <span style="color: #e57373;">*</span></label>
                 <input type="file" id="stl_file" name="stl_file" accept=".stl" required>
             </div>
+
             <div class="form-group">
                 <label for="title">Titel <span style="color: #e57373;">*</span></label>
                 <input type="text" id="title" name="title" placeholder="Bijv. Cool printbaar onderdeel" required>
             </div>
+
             <div class="form-group">
                 <label for="location">Locatie</label>
                 <input type="text" id="location" name="location" placeholder="Bijv. Antwerpen">
             </div>
+
             <div class="form-group">
                 <label for="tags">Tags</label>
                 <input type="text" id="tags" name="tags" placeholder="#3dprint #noxco">
             </div>
+
             <div class="form-actions">
-                <a href="{{ url_for('main.profile') }}" class="btn-cancel">Annuleren</a>
+                <!-- Кнопка отмены — тоже ведёт на профиль пользователя -->
+                <a href="{{ url_for('main.profile', user_id=current_user.id) }}" class="btn-cancel">Annuleren</a>
                 <button type="submit" class="btn-submit">Uploaden</button>
             </div>
         </form>

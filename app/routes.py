@@ -377,7 +377,7 @@ def upload_model():
     if request.method == 'POST':
         if 'stl_file' not in request.files:
             flash('Geen bestand geselecteerd.', 'danger')
-            return redirect(url_for('main.home'))
+            return redirect(url_for('main.profile', user_id=current_user.id))
 
         file = request.files['stl_file']
         title = request.form.get('title')
@@ -386,16 +386,21 @@ def upload_model():
 
         if file.filename == '':
             flash('Geen bestand geselecteerd.', 'danger')
-            return redirect(url_for('main.home'))
+            return redirect(url_for('main.profile', user_id=current_user.id))
 
         if file and allowed_file(file.filename, ALLOWED_STL_EXTENSIONS):
             filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER_STL_MODELS'], filename)
+            UPLOAD_FOLDER = os.path.join(current_app.root_path, 'static', 'uploads', 'stl_models')
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+
             try:
                 file.save(file_path)
+                relative_path = f'stl_models/{filename}'
+
                 new_model = STLModel(
                     title=title,
-                    filename=filename,
+                    filename=relative_path,
                     date_posted=datetime.utcnow(),
                     user_id=current_user.id,
                     location=location,
@@ -404,14 +409,16 @@ def upload_model():
                 db.session.add(new_model)
                 db.session.commit()
                 flash('Model succesvol geüpload!', 'success')
-                return redirect(url_for('main.profile'))
+                return redirect(url_for('main.profile', user_id=current_user.id))
+
             except Exception as e:
                 db.session.rollback()
                 current_app.logger.error(f"Fout bij uploaden of opslaan model: {e}", exc_info=True)
                 flash(f'Er is een fout opgetreden bij het uploaden: {e}', 'danger')
-                return redirect(url_for('main.home'))
+                return redirect(url_for('main.profile', user_id=current_user.id))
         else:
             flash('Alleen STL-bestanden zijn toegestaan (.stl).', 'danger')
-            return redirect(url_for('main.home'))
-    # GET запрос — просто показать форму
+            return redirect(url_for('main.profile', user_id=current_user.id))
+
+    # GET request
     return render_template('upload_model.html')
