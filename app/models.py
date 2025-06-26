@@ -1,9 +1,17 @@
-# app/models.py
 from app.extensions import db
 from flask_login import UserMixin
 from datetime import datetime
+import json
 
+# --- Таблица для подписок (follow) ---
+class Follow(db.Model):
+    __tablename__ = 'follow'
+    id = db.Column(db.Integer, primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'))
+    followed_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'))
+    timestamp = db.Column(db.DateTime, default=db.func.now())
 
+# --- Главная таблица пользователя ---
 class Gebruiker(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -11,35 +19,43 @@ class Gebruiker(db.Model, UserMixin):
     profile_picture_url = db.Column(db.String(200), nullable=True)
     auth0_user_id = db.Column(db.String(100), unique=True, nullable=False)
 
-    # Optionele velden die je in profile.html gebruikt
     full_name = db.Column(db.String(100), nullable=True)
     bio = db.Column(db.Text, nullable=True)
-
-    # --- NIEUW VELD: Is het account privé? ---
-    # Gewijzigd: server_default toegevoegd voor correcte migratie op een bestaande tabel
     is_private = db.Column(db.Boolean, default=False, nullable=False, server_default=db.text('FALSE'))
 
-    # --- RELATIES VOOR VOLGSYSTEEM ---
+    # Кто на меня подписан
     followers = db.relationship(
-        'Follow', foreign_keys='Follow.followed_id',
-        backref='followed', lazy='dynamic', cascade='all, delete-orphan'
+        'Follow',
+        foreign_keys='Follow.followed_id',
+        backref='followed_user',   # backref для Follow.followed
+        lazy='dynamic',
+        cascade='all, delete-orphan'
     )
+    # На кого я подписан
     following = db.relationship(
-        'Follow', foreign_keys='Follow.follower_id',
-        backref='follower', lazy='dynamic', cascade='all, delete-orphan'
+        'Follow',
+        foreign_keys='Follow.follower_id',
+        backref='follower_user',   # backref для Follow.follower
+        lazy='dynamic',
+        cascade='all, delete-orphan'
     )
+    def is_following(self, user):
+        if user.id is None:
+            return False
+        return self.following.filter_by(followed_id=user.id).first() is not None
+    comments_made = db.relationship('Comment', backref='author', lazy='dynamic')
+    likes_given = db.relationship('Like', backref='user', lazy='dynamic')
 
-    # --- NIEUWE RELATIES VOOR LIKES EN COMMENTAREN (voor Gebruiker) ---
-    comments_made = db.relationship('Comment', backref='author', lazy='dynamic') # Gebruiker is auteur van commentaar
-    likes_given = db.relationship('Like', backref='user', lazy='dynamic') # Gebruiker is auteur van like
+    # --- Свойство для получения объектов пользователей, на которых я подписан ---
+    @property
+    def followed(self):
+        # Возвращает список объектов Gebruiker, на которых я подписан
+        return [f.followed_user for f in self.following]
 
-    def __repr__(self):
-        return f"Gebruiker('{self.username}', '{self.email}', 'Privé: {self.is_private}')"
-
-    # --- METHODEN VOOR HET BEHEER VAN VOLGERS ---
+    # --- Методы для управления подписками ---
     def follow(self, user):
         if not self.is_following(user):
-            f = Follow(follower=self, followed=user)
+            f = Follow(follower_id=self.id, followed_id=user.id)
             db.session.add(f)
             return True
         return False
@@ -51,32 +67,55 @@ class Gebruiker(db.Model, UserMixin):
             return True
         return False
 
-    def is_following(self, user):
-        if user.id is None: # Bescherming tegen pogingen om een niet-bestaande gebruiker te volgen
-            return False
-        return self.following.filter_by(followed_id=user.id).first() is not None
 
-    # Extra methoden voor gemak met likes
+
     def has_liked_model(self, stl_model):
-        if stl_model.id is None: # Bescherming tegen pogingen om een niet-bestaand model te liken
+        if stl_model.id is None:
             return False
         return self.likes_given.filter_by(model_id=stl_model.id).first() is not None
 
+    # --- REDIS CACHE МЕТОДЫ ---
+    def cache_key(self):
+        return f"gebruiker:{self.id}"
 
-# --- MODEL: Voor het opslaan van volgrelaties ---
-class Follow(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    follower_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'), nullable=False)
-    followed_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'), nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    def cache_to_redis(self, expire_seconds=3600):
+        from app.extensions import redis_client
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'profile_picture_url': self.profile_picture_url,
+            'full_name': self.full_name,
+            'bio': self.bio,
+            'is_private': self.is_private,
+        }
+        redis_client.setex(self.cache_key(), expire_seconds, json.dumps(data))
 
-    # Zorgt ervoor dat een gebruiker niet dezelfde persoon meer dan één keer kan volgen
-    __table_args__ = (db.UniqueConstraint('follower_id', 'followed_id', name='_follower_followed_uc'),)
+    @classmethod
+    def get_from_cache(cls, user_id):
+        from app.extensions import redis_client
+        key = f"gebruiker:{user_id}"
+        cached = redis_client.get(key)
+        if cached:
+            return json.loads(cached)
+        user = cls.query.get(user_id)
+        if user:
+            user.cache_to_redis()
+            return {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'profile_picture_url': user.profile_picture_url,
+                'full_name': user.full_name,
+                'bio': user.bio,
+                'is_private': user.is_private,
+            }
+        return None
 
     def __repr__(self):
-        return f'<Volgen {self.follower_id} volgt {self.followed_id}>'
+        return f"Gebruiker('{self.username}', '{self.email}', 'Privé: {self.is_private}')"
 
-
+# --- Модель для STL файлов ---
 class STLModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -86,29 +125,27 @@ class STLModel(db.Model):
     tags = db.Column(db.String(200), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'), nullable=False)
 
-    # Relatie naar Gebruiker: elke STLModel behoort tot één Gebruiker
-    user = db.relationship('Gebruiker', backref='posts', lazy=True) # backref 'posts' voor gemak
+    user = db.relationship('Gebruiker', backref='posts', lazy=True)
 
-    # --- NIEUWE RELATIES VOOR LIKES EN COMMENTAREN (voor STLModel) ---
-    likes_received = db.relationship('Like', backref='model', lazy='dynamic', cascade='all, delete-orphan') # Likes die de model heeft ontvangen
-    comments = db.relationship('Comment', backref='model', lazy='dynamic', cascade='all, delete-orphan') # Commentaren op de model
+    likes_received = db.relationship('Like', backref='model', lazy='dynamic', cascade='all, delete-orphan')
+    comments = db.relationship('Comment', backref='model', lazy='dynamic', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f"STLModel('{self.title}', '{self.date_posted}')"
 
-# --- NIEUWE MODELLEN: Like en Commentaar ---
+# --- Модель лайков ---
 class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'), nullable=False)
     model_id = db.Column(db.Integer, db.ForeignKey('stl_model.id'), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    # Uniciteit: één gebruiker kan één model slechts één keer liken
     __table_args__ = (db.UniqueConstraint('user_id', 'model_id', name='_user_model_like_uc'),)
 
     def __repr__(self):
         return f'<Like Gebruiker {self.user_id} op Model {self.model_id}>'
 
+# --- Модель комментариев ---
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)

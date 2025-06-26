@@ -1,0 +1,63 @@
+<!-- view_model.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ model.title }}{% endblock %}
+
+{% block content %}
+<div class="model-detail-container">
+    <!-- Кнопка "Назад" к профилю загрузившего пользователя -->
+    <a href="{{ url_for('main.profile', user_id=model.user.id) }}" class="terug-btn"><i class="fas fa-arrow-left"></i> Terug naar profiel</a>
+
+    <div class="model-info-section">
+        <h1 class="model-title">{{ model.title }}</h1>
+        <p class="model-author">Geüpload door: <a href="{{ url_for('main.profile', user_id=model.user.id) }}">{{ model.user.username }}</a> op {{ model.date_posted.strftime('%Y-%m-%d') }}</p>
+        <div class="model-stats">
+            <span><i class="fas fa-heart"></i> {{ likes }} Likes</span>
+            <span><i class="fas fa-comment"></i> {{ comments|length }} Reacties</span>
+            <span><i class="fas fa-map-marker-alt"></i> {{ model.location or 'Onbekend' }}</span>
+        </div>
+    </div>
+
+    <!-- КОНТЕЙНЕР 3D-ПРОСМОТРЩИКА -->
+    <div id="model-viewer-detail">
+        <!-- Здесь будет вставлен холст Three.js -->
+    </div>
+
+    <div class="model-description">
+        <p>{{ model.tags or 'Geen beschrijving beschikbaar.' }}</p>
+    </div>
+
+    <!-- Секция комментариев -->
+    <div class="comments-section">
+        <h3>Reacties</h3>
+        {% if comments %}
+            <ul>
+            {% for comment in comments %}
+                <li><strong>{{ comment.author.username }}</strong>: {{ comment.text }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nog geen reacties.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block body_extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Вызываем глобально доступную функцию initStlViewer для этой конкретной модели
+        const detailViewerContainer = document.getElementById('model-viewer-detail');
+        // Получаем имя STL-файла напрямую из контекста Flask
+        const stlFilename = "{{ model.filename }}";
+
+        // Проверяем, доступны ли контейнер и функция initStlViewer
+        if (detailViewerContainer && stlFilename && typeof initStlViewer !== 'undefined') {
+            initStlViewer('model-viewer-detail', stlFilename);
+        } else {
+            console.error("Невозможно инициализировать 3D-просмотрщик на странице сведений о модели: контейнер, имя файла или функция initStlViewer отсутствуют.");
+        }
+    });
+</script>
+{% endblock %}

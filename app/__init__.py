@@ -1,26 +1,19 @@
 import os
 import logging
+from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_migrate import Migrate
 from flask_login import LoginManager, current_user
 from flask_wtf.csrf import CSRFProtect
-
+from app.extensions import db, oauth
+from app.auth import auth_bp
+from app.routes import main_bp
+from app.redis_test import redis_test  # Blueprint voor Redis-test
 from .config import Config
-from .extensions import db, oauth
-from .auth import auth_bp
-from .routes import main_bp
-from app.models import Gebruiker
 
-# Initialiseer CSRFProtect globaal
 csrf = CSRFProtect()
-
-# Flask-Login
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
-
-@login_manager.user_loader
-def load_user(user_id):
-    return Gebruiker.query.get(int(user_id))
 
 def inject_user():
     return dict(current_user=current_user)
@@ -29,16 +22,18 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
+    # Blueprints
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(redis_test)
+
+    # Database
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-    print(f"DEBUG (__init__.py): app.config['SQLALCHEMY_DATABASE_URI']: {app.config.get('SQLALCHEMY_DATABASE_URI')}")
-
     db.init_app(app)
-    oauth.init_app(app)
     Migrate(app, db)
-    login_manager.init_app(app)
-    csrf.init_app(app)
-    app.context_processor(inject_user)
 
+    # OAuth
+    oauth.init_app(app)
     oauth.register(
         name='auth0',
         client_id=app.config['AUTH0_CLIENT_ID'],
@@ -50,14 +45,29 @@ def create_app(config_class=Config):
         }
     )
 
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(main_bp)
+    # CSRF en login
+    login_manager.init_app(app)
+    csrf.init_app(app)
+    app.context_processor(inject_user)
 
-    from . import models  # noqa: F401
+    # <<<<< Belangrijk: pas hier na de app-setup de modellen importeren! >>>>>
+    from app.models import Gebruiker
 
-    logging.basicConfig()
-    logging.getLogger('authlib').setLevel(logging.DEBUG)
-    logging.getLogger('urllib3').setLevel(logging.DEBUG)
-    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+    # User loader registreer je na de import
+    @login_manager.user_loader
+    def load_user(user_id):
+        return Gebruiker.query.get(int(user_id))
+
+    # Logging instellen
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    file_handler = RotatingFileHandler('logs/flask.log', maxBytes=10240, backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+    ))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('Noxco startup')
 
     return app

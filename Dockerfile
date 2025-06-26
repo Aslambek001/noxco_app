@@ -15,3 +15,4 @@ ENV FLASK_APP=run.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 CMD ["flask", "run"]
+ENV FLASK_APP=wsgi.py
