@@ -116,7 +116,11 @@ class Gebruiker(db.Model, UserMixin):
         return f"Gebruiker('{self.username}', '{self.email}', 'Privé: {self.is_private}')"
 
 # --- Модель для STL файлов ---
+
+
 class STLModel(db.Model):
+    __tablename__ = 'stlmodel'
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     filename = db.Column(db.String(120), nullable=False)
@@ -125,9 +129,9 @@ class STLModel(db.Model):
     tags = db.Column(db.String(200), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'), nullable=False)
 
-    user = db.relationship('Gebruiker', backref='posts', lazy=True)
+    gebruiker = db.relationship('Gebruiker', backref='stl_models', lazy=True)  # user → gebruiker (чтобы было как в других местах)
 
-    likes_received = db.relationship('Like', backref='model', lazy='dynamic', cascade='all, delete-orphan')
+    likes = db.relationship('Like', backref='model', lazy='dynamic', cascade='all, delete-orphan')
     comments = db.relationship('Comment', backref='model', lazy='dynamic', cascade='all, delete-orphan')
 
     def __repr__(self):
@@ -137,7 +141,7 @@ class STLModel(db.Model):
 class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'), nullable=False)
-    model_id = db.Column(db.Integer, db.ForeignKey('stl_model.id'), nullable=False)
+    model_id = db.Column(db.Integer, db.ForeignKey('stlmodel.id'), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     __table_args__ = (db.UniqueConstraint('user_id', 'model_id', name='_user_model_like_uc'),)
@@ -151,7 +155,7 @@ class Comment(db.Model):
     text = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'), nullable=False)
-    model_id = db.Column(db.Integer, db.ForeignKey('stl_model.id'), nullable=False)
+    model_id = db.Column(db.Integer, db.ForeignKey('stlmodel.id'), nullable=False)
 
     def __repr__(self):
         return f'<Commentaar {self.id} door Gebruiker {self.user_id} op Model {self.model_id}>'

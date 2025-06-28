@@ -10,6 +10,9 @@ from app.auth import auth_bp
 from app.routes import main_bp
 from app.redis_test import redis_test  # Blueprint voor Redis-test
 from .config import Config
+from flask_session import Session
+import redis
+
 
 csrf = CSRFProtect()
 login_manager = LoginManager()
@@ -21,6 +24,20 @@ def inject_user():
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    # Sessions via Redis
+    app.config['SESSION_TYPE'] = 'redis'
+    redis_url = os.environ.get('REDIS_URL')
+    if not redis_url:
+        raise Exception("REDIS_URL not found in environment variables!")
+
+    app.config['SESSION_REDIS'] = redis.from_url(redis_url)
+    app.config['SESSION_COOKIE_NAME'] = 'noxco_session'
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SECURE'] = False  # HTTPS? → True!
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Of 'None' bij Auth0/HTTPS
+    app.config['PERMANENT_SESSION_LIFETIME'] = 3600
+
+    Session(app)
 
     # Blueprints
     app.register_blueprint(auth_bp)

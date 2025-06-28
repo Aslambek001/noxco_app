@@ -1,5 +1,14 @@
 import os
 
+# 🔐 Настройки для cookies сессии
+SESSION_COOKIE_NAME = 'noxco_session'
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = False    # True только если HTTPS!
+SESSION_COOKIE_SAMESITE = 'Lax'  # Если локально. Для Auth0 и HTTPS — 'None'
+PERMANENT_SESSION_LIFETIME = 3600  # Сколько живёт сессия (секунд)
+
+# (Если используешь Redis для сессий — скажи об этом)
+
 # 📁 Uploadpaden voor bestanden
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 REDIS_URL = os.getenv('REDIS_URL')

@@ -7,9 +7,11 @@
 <div class="model-detail-container">
 
     <!-- Кнопка "Назад" -->
-    <a href="{{ url_for('main.profile', user_id=model.user.id) }}" class="terug-btn">
-        <i class="fas fa-arrow-left"></i> Terug naar profiel
-    </a>
+  <a href="{{ url_for('main.profile') }}" class="terug-btn">
+    <i class="fas fa-arrow-left"></i> Terug naar profiel
+</a>
+
+
 
     <div class="model-info-section">
         <h1 class="model-title">{{ model.title }}</h1>

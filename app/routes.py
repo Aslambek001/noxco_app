@@ -40,7 +40,17 @@ def home():
             Gebruiker.is_private.is_(False)
         ).order_by(STLModel.date_posted.desc()).limit(20)
 
-    return render_template('home.html')
+    stl_models = stl_models_query.all()
+
+    # Дополнительно добавить к каждому объекту нужные поля для шаблона:
+    for model in stl_models:
+        model.likes_count = model.likes.count() if hasattr(model, "likes") else Like.query.filter_by(model_id=model.id).count()
+        model.comments_count = model.comments.count() if hasattr(model, "comments") else Comment.query.filter_by(model_id=model.id).count()
+        model.author_username = model.gebruiker.username if hasattr(model, "gebruiker") else "Onbekend"
+        model.profile_picture_url = model.gebruiker.profile_picture_url if hasattr(model, "gebruiker") else None
+        model.user_id = model.gebruiker.id if hasattr(model, "gebruiker") else None
+
+    return render_template('home.html', stl_models=stl_models)
 
 
 @main_bp.route('/profile', defaults={'user_id': None})
@@ -310,6 +320,7 @@ def get_csrf_token_api():
 
 
 @main_bp.route('/search', methods=['GET'])
+@login_required
 def search_users():
     query = request.args.get('query', '').strip()
     users = []
@@ -363,6 +374,7 @@ def overzicht_redis():
 
 
 @main_bp.route('/model/<int:model_id>')
+@login_required
 def view_model(model_id):
     model = STLModel.query.get_or_404(model_id)
     # comments en likes ophalen, afhankelijk van je model
