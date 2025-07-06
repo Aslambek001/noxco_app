@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv, find_dotenv
-from app import create_app
+from noxco_app import create_app
 
 # Zoek en laad het .env bestand
 dotenv_path = find_dotenv()
